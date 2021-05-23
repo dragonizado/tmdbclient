@@ -1,41 +1,114 @@
 #!/usr/bin/env php
 <?php
 
-function showln($mensaje){
+function println($mensaje){
 	echo $mensaje."\n";
 }
 
 class dgConsole{
 
 	public function validateDB(){
-		showln("Validando si existe una instancia de POSTGRES");
+		println("Validando si existe una instancia de POSTGRES");
 	}
 
 	public function validateRequeriments(){
 		$valid = true;
-		
-		
-		
 		if(!$valid){
 			die("No cumples con los requisitos necesarios para instalar la aplicación");
 		}
+	}
+
+	public function sh(){
+		println("Configurancion del entorno");
+		$apidomain = "https://api.themoviedb.org/3/";
+		$apikey = "355152aeffdaa3cfaa9511d9aaee90ce";
+		$hasApikey = readline("Tienes un Apikey TMDB? [No,si]:");
+		if(!$hasApikey || strtolower($hasApikey) == "n" || strtolower($hasApikey) == "no"){
+			println("Utilizando api por defecto");
+		}elseif(strtolower($hasApikey) == "s" || strtolower($hasApikey) == "si"){
+			println("Tienes api key");
+			$apikey = readline("Ingresa el tu TMDB key:");
+		}else{
+			println("No se ha podido interpretar la opcion ingresada puedes dejar en blanco para NO o utilizar S / SI para SI");
+		}
+
+		$myenvconfig[] = "TMDB_API_DOMAIN=\"$apidomain\"";
+		$myenvconfig[] = "TMDB_API_KEY=$apikey";
+	
+		$domaindess = readline("Deseas utilizar $apidomain como dominio para el api puedes personalizar esto más adelante en el .env [S,n]:") ;
+		$domaindess = ($domaindess != "")?$domaindess:"si";
+		if($domaindess){
+			println("Se utilizó $apidomain como dominio para TMDB Api");
+		}else{
+			$apidomain = readline("Ingrese el dominio a utilizar:");
+			println("Se utilizó $apidomain como dominio para TMDB Api");
+		}
+
+		if(file_exists("./.env")){
+			$env = fopen(".env","r+");
+			$this->putExtrEnv($myenvconfig);
+		}else{
+			$this->makeEnv($myenvconfig);
+		}
+	}
+
+	private function makeEnv($extra = []){
+		shell_exec("cp .env.example .env");
+		$this->putExtrEnv($extra);
+	}
+
+	private function putExtrEnv($extra = []){
+		$env = fopen(".env","r+");
+		$createnew = true;
+		while(!feof($env)) {
+			$linea = fgets($env);
+			if($this->validateEnvTMDBKeys($linea,$extra)){
+				println("Error: ya existe una configuración en el archivo .env");
+				$createnew = false;
+				break;
+			}
+		}
+		if($createnew){
+			// fwrite($env,PHP_EOL);
+			for ($i=0; $i < count($extra); $i++) { 		
+				if($i == 0){
+					fwrite($env,PHP_EOL.$extra[0].PHP_EOL);
+				}else{
+					fwrite($env,$extra[$i].PHP_EOL);
+				}
+			}
+			println("Se ha configurado correctamente la aplicación");
+		}
+		fclose($env);
+	}
+
+	private function validateEnvTMDBKeys($line,$tmdbconfig){
+		if((string)$line == (string)$tmdbconfig[0].PHP_EOL || $line == $tmdbconfig[1].PHP_EOL){
+			return true;
+		}
+		return false;
 	}
 
 	public function install(){
 		$this->validateDB();
 		echo "Se ha validaddo la instancia de forma segura";
 		
-		showln("Ingresa tu nombre");
+		println("Ingresa tu nombre");
 		$name = readline();
 
-		showln("Bienvenido $name Gracias por hacer parte de esta prueba");
+		println("Bienvenido $name Gracias por hacer parte de esta prueba");
 
 	}
 
 }
 
+$consoleInstall = new dgConsole();
 
-
-(new dgConsole())->install();
+if(isset($argv[1]) && $argv[1] == "--origin=sh"){
+	$consoleInstall->sh();
+	// $consoleInstall->putExtrEnv();
+}else{
+	$consoleInstall->install();
+}
 
 ?>

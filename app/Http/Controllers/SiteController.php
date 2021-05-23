@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\Http;
 class SiteController extends Controller
 {   
     public function index(){
-        $api = new TMDB();
-        $fullMovies = $api->fetch("https://api.themoviedb.org/3/movie/popular")->get();
+        $tmdbApi = new DGTMDB();
+        $fullMovies = $tmdbApi->fetch("movie/popular")->get();
         return view("movies.index",compact("fullMovies"));
     }
 }
 
 
-class TMDB{
+class DGTMDB{
     private $host;
     private $url;
     private $key;
@@ -28,7 +28,7 @@ class TMDB{
     }
 
     public function fetch($res){
-        $this->url = "$res";
+        $this->url = env("TMDB_API_DOMAIN").$res;
         return $this;
     }
 
