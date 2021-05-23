@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+function showln($mensaje){
+	echo $mensaje."\n";
+}
+
+class dgConsole{
+
+	public function validateDB(){
+		showln("Validando si existe una instancia de POSTGRES");
+	}
+
+	public function validateRequeriments(){
+		$valid = true;
+		
+		
+		
+		if(!$valid){
+			die("No cumples con los requisitos necesarios para instalar la aplicación");
+		}
+	}
+
+	public function install(){
+		$this->validateDB();
+		echo "Se ha validaddo la instancia de forma segura";
+		
+		showln("Ingresa tu nombre");
+		$name = readline();
+
+		showln("Bienvenido $name Gracias por hacer parte de esta prueba");
+
+	}
+
+}
+
+
+
+(new dgConsole())->install();
+
+?>
