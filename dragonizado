@@ -21,19 +21,19 @@ class dgConsole{
 	public function sh(){
 		println("Configurancion del entorno");
 		$apidomain = "https://api.themoviedb.org/3/";
-		$apikey = "355152aeffdaa3cfaa9511d9aaee90ce";
+		$ak = "355152aeffdaa3cfaa9511d9aaee90ce";
 		$hasApikey = readline("Tienes un Apikey TMDB? [No,si]:");
 		if(!$hasApikey || strtolower($hasApikey) == "n" || strtolower($hasApikey) == "no"){
 			println("Utilizando api por defecto");
 		}elseif(strtolower($hasApikey) == "s" || strtolower($hasApikey) == "si"){
 			println("Tienes api key");
-			$apikey = readline("Ingresa el tu TMDB key:");
+			$ak = readline("Ingresa el tu TMDB key:");
 		}else{
 			println("No se ha podido interpretar la opcion ingresada puedes dejar en blanco para NO o utilizar S / SI para SI");
 		}
 
 		$myenvconfig[] = "TMDB_API_DOMAIN=\"$apidomain\"";
-		$myenvconfig[] = "TMDB_API_KEY=$apikey";
+		$myenvconfig[] = "TMDB_API_KEY=$ak";
 	
 		$domaindess = readline("Deseas utilizar $apidomain como dominio para el api puedes personalizar esto más adelante en el .env [S,n]:") ;
 		$domaindess = ($domaindess != "")?$domaindess:"si";
@@ -69,7 +69,6 @@ class dgConsole{
 			}
 		}
 		if($createnew){
-			// fwrite($env,PHP_EOL);
 			for ($i=0; $i < count($extra); $i++) { 		
 				if($i == 0){
 					fwrite($env,PHP_EOL.$extra[0].PHP_EOL);

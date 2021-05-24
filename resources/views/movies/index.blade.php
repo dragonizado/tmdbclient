@@ -1,17 +1,37 @@
-<form action="" method="post">
-    <select name="type" id="">
-        <option value="">Name</option>
-        <option value="">Release Date</option>
-    </select>
-    <input type="text" name="search">
-    <button>Buscar</button>
-</form>
+@extends('layouts.app')
 
-@foreach ($fullMovies['results'] as $movie)
+@section('content')  
+
+@auth
+
     <div>
-        <img src="https://image.tmdb.org/t/p/w500{{$movie['backdrop_path']}}" alt="{{$movie['original_title']}}">
-        <span>{{$movie['vote_average']}}</span>
-        <h5>{{$movie['original_title']}}</h5>
-        <p>{{$movie['release_date']}}</p>
+        <h2>{{__('Your movies')}} <a href="{{route('site.movie.register')}}" class="btn btn-info ml-3">New</a></h2> 
     </div>
-@endforeach
+    <show-movies-component>
+      @forelse ($user_movies as $movie)
+          <movie-front-component local="true" id="{{$movie['id']}}" img="{{$movie['poster_path']}}" title="{{$movie['original_title']}}" date="{{$movie['release_date']}}"></movie-front-component>
+      @empty
+          <div class="text-center w-100">
+              <p>{{__('You have no movies registered ')}}</p>
+          </div>
+      @endforelse
+    </show-movies-component>
+    <hr>
+
+  @if (count($other_user_movies) > 0)
+    <h2>{{__('Other users')}}</h2> 
+    <show-movies-component>
+      @foreach ($other_user_movies as $movie)
+        <movie-front-component local="true" id="{{$movie['id']}}" img="{{$movie['poster_path']}}" title="{{$movie['original_title']}}" date="{{$movie['release_date']}}"></movie-front-component>
+      @endforeach
+    </show-movies-component>
+  @endif
+
+@endauth
+<h2>{{__('Popular')}}</h2>
+<show-movies-component>
+  @foreach ($full_movies['results'] as $movie)
+      <movie-front-component id="{{$movie['id']}}" local="false" img="{{$movie['poster_path']}}" poster="{{$movie['poster_path']}}" title="{{$movie['original_title']}}" date="{{$movie['release_date']}}"></movie-front-component>
+  @endforeach
+</show-movies-component>
+@endsection
