@@ -9,6 +9,7 @@ else
     echo "Se ha creado el .env correctamente"
 fi
 php dragonizado --origin=sh
+php artisan migrate
 echo "Instalacion correcta"
 php artisan serve
 

@@ -50,12 +50,93 @@ class dgConsole{
 		}else{
 			$this->makeEnv($myenvconfig);
 		}
+
+		return $this->checkPgsql();
 	}
 
 	private function makeEnv($extra = []){
 		shell_exec("cp .env.example .env");
 		$this->putExtrEnv($extra);
 	}
+
+	public function checkPgsql(){
+
+		println("Validando la base de datos");
+		$query = "";
+
+		
+		$dbhost = readline("El host se encuentra en 127.0.0.1? [S/n]:");
+		$dbhost = strtolower($dbhost);
+		if(!$dbhost || $dbhost == "si" ||  $dbhost == "s"){
+			$dbhost = "127.0.0.1";
+		}else{
+			if($dbhost != "" || $dbhost == "no" || $dbhost == "n"){
+				$dbhost = readline("Ingrese el host a utilizar:");
+			}else{
+				println("no se puede optener el host, reiniciar la instalación");
+			}
+		}
+		$query = "host=$dbhost ";
+		println("Utilizando $dbhost como dbhost.");
+
+		$dbport = readline("El pueto de conexion es 5432 ? [S/n]:");
+		$dbport = strtolower($dbport);
+		if(!$dbport || $dbport == "si" ||  $dbport == "s"){
+			$dbport = "5432";
+		}else{
+			if($dbport != "" || $dbport == "no" || $dbport == "n"){
+				$dbport = readline("Ingrese el puerto a utilizar:");
+			}else{
+				println("no se puede obtener el puerto de la base de datos, reiniciar la instalación");
+			}
+		}
+		$query .= "port=$dbport ";
+		println("Utilizando $dbport como dbport.");
+
+		$dbname = readline("La base de datos es tmdb (dbname por defecto)? [S/n]:");
+		$dbname = strtolower($dbname);
+		if(!$dbname || $dbname == "si" ||  $dbname == "s"){
+			$dbname = "tmdb";
+		}else{
+			if($dbname != "" || $dbname == "no" || $dbname == "n"){
+				$dbname = readline("Ingrese el nombre de la base de datos a utilizar:");
+			}else{
+				println("no se puede obtener el nombre de la base de datos, reiniciar la instalación");
+			}
+		}
+		$query .= "dbname=$dbname ";
+		println("Utilizando $dbname como dbname.");
+
+		$dbuser = readline("El usuario es postgres (por defecto)? [S/n]:");
+		$dbuser = strtolower($dbuser);
+		if(!$dbuser || $dbuser == "si" ||  $dbuser == "s"){
+			$dbuser = "postgres";
+		}else{
+			if($dbuser != "" || $dbuser == "no" || $dbuser == "n"){
+				$dbuser = readline("Ingrese el nombre de usuario a utilizar:");
+			}else{
+				println("no se puede obtener el nombre de usuario, reiniciar la instalación");
+			}
+		}
+		$query .= "user=$dbuser ";
+		println("Utilizando $dbuser como dbuser.");
+
+		$dbpass = readline("Ingrese la contraseña para el usuario $dbuser:");
+		$query .= "password=$dbpass ";
+		
+
+		println("Probando la conexion con la base de datos");
+		$dbconn = pg_connect($query) or die("No se ha podido conectar\n");
+		$stat = pg_connection_status($dbconn);
+		if ($stat === PGSQL_CONNECTION_OK) {
+			println('Estado de la conexión ok');
+			return true;
+		} else {
+			println('No se ha podido conectar');
+			return false;
+		} 
+	}
+
 
 	private function putExtrEnv($extra = []){
 		$env = fopen(".env","r+");
@@ -103,11 +184,16 @@ class dgConsole{
 
 $consoleInstall = new dgConsole();
 
+
 if(isset($argv[1]) && $argv[1] == "--origin=sh"){
-	$consoleInstall->sh();
-	// $consoleInstall->putExtrEnv();
-}else{
-	$consoleInstall->install();
+	return $consoleInstall->sh();
+	exit();
 }
 
+if(isset($argv[1]) && $argv[1] == "--dbcheck"){
+	$consoleInstall->checkPgsql();
+	exit();
+}
+
+$consoleInstall->install();
 ?>
