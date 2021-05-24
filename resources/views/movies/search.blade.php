@@ -24,10 +24,10 @@
     @endauth
 <h3>Search</h3>
 <show-movies-component>
-    @if (isset($movies['results']))    
+    @if (isset($movies['results']))  
         @forelse ($movies['results'] as $movie)
             @if (isset($movie['poster_path']) && isset($movie['poster_path']) && isset($movie['original_title']) && isset($movie['release_date']))
-                <movie-front-component local="false" id="{{$movie['id']}}" img="{{$movie['poster_path']}}" poster="{{$movie['poster_path']}}" title="{{$movie['original_title']}}" date="{{$movie['release_date']}}"></movie-front-component>
+                <movie-front-component rsearch="{{$movies['isapisearch']}}" overview="{{$movie['overview']}}" votecount="{{$movie['vote_count']}}" local="false" id="{{$movie['id']}}" img="{{$movie['poster_path']}}" poster="{{$movie['poster_path']}}" title="{{$movie['original_title']}}" date="{{$movie['release_date']}}"></movie-front-component>
             @endif
         @empty
             <div class="text-center w-100">

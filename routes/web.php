@@ -20,6 +20,7 @@ Route::get('/movies',[SiteController::class,"find"])->name("site.find");
 Route::get('/movie/{id}/{local}',[SiteController::class,"show"])->name("site.movie.show");
 Route::get('/movie/register',[SiteController::class,"create"])->name("site.movie.register");
 Route::post('/movie/register',[SiteController::class,"store"])->name("site.movie.store");
+Route::post('/search/register',[SiteController::class,"serachStore"])->name("site.movie.search.store");
 
 Auth::routes();
 

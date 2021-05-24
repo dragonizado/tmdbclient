@@ -52,6 +52,7 @@ class SiteController extends Controller
         if($request->has("name")){
             $name=$request->input("name");
             $movies = $tmdb_api->fetch('search/movie')->where("query=$name")->get();
+            $movies['isapisearch'] = true;
         }
 
         if(Auth::check()){
@@ -100,6 +101,23 @@ class SiteController extends Controller
         $model->backdrop_path = url("uploads/$newFCName");
         $model->release_date = $request->input("date");
         $model->user_id = Auth::user()->id;
+        if($model->save()){
+            return response()->json(["ok"]);
+        }else{
+            return response()->json(["Error al guardar los datos"], 401);
+        }
+    }
+
+    public function serachStore(Request $request){
+        $this->middleware('auth');
+        $model = new Movie();
+        $model->original_title = $request->input("title");
+        $model->overview = $request->input("overview");
+        $model->vote_count = $request->input("vote_count");
+        $model->poster_path = $request->input("image");
+        $model->backdrop_path = $request->input("backdrop");
+        $model->release_date = $request->input("date");
+        $model->user_id = 0;
         if($model->save()){
             return response()->json(["ok"]);
         }else{

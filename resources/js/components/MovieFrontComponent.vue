@@ -1,6 +1,6 @@
 <template>
     <div class="w-25 p-1">
-        <a :href="makeUrl">
+        <a :href="makeUrl" @click.prevent="registerSerach">
             <img class="w-100" :src="movieImage" :alt="title">
         </a>
         <div class="text-center">
@@ -37,8 +37,29 @@ export default {
             return `/img/not-found.png` 
         }
     },
-    mounted() {
-        
-    },
+    methods:{
+        rediretToMovie(){
+            if(typeof this.id != "undefined" && typeof this.local != "undefined"){
+                return route("site.movie.show",[this.id,this.local]);
+            }
+        }
+        ,
+        registerSerach(){
+            if(typeof this.$attrs.rsearch != "undefined"){
+                let form = new FormData();
+                form.append("image",`https://image.tmdb.org/t/p/w500${this.img}`);
+                form.append("title",this.title);
+                form.append("date",this.date);
+                form.append("overview",this.$attrs.overview);
+                form.append("vote_count",this.$attrs.votecount);
+                form.append("backdrop",this.$attrs.poster);
+                axios.post(route("site.movie.search.store"),form).then(response=>{
+                    window.location.href = this.rediretToMovie()
+                })
+            }else{
+                window.location.href = this.rediretToMovie()
+            }
+        }
+    }
 }
 </script>

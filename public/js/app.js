@@ -2128,7 +2128,31 @@ __webpack_require__.r(__webpack_exports__);
       return "/img/not-found.png";
     }
   },
-  mounted: function mounted() {}
+  methods: {
+    rediretToMovie: function rediretToMovie() {
+      if (typeof this.id != "undefined" && typeof this.local != "undefined") {
+        return route("site.movie.show", [this.id, this.local]);
+      }
+    },
+    registerSerach: function registerSerach() {
+      var _this = this;
+
+      if (typeof this.$attrs.rsearch != "undefined") {
+        var form = new FormData();
+        form.append("image", "https://image.tmdb.org/t/p/w500".concat(this.img));
+        form.append("title", this.title);
+        form.append("date", this.date);
+        form.append("overview", this.$attrs.overview);
+        form.append("vote_count", this.$attrs.votecount);
+        form.append("backdrop", this.$attrs.poster);
+        axios.post(route("site.movie.search.store"), form).then(function (response) {
+          window.location.href = _this.rediretToMovie();
+        });
+      } else {
+        window.location.href = this.rediretToMovie();
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -38367,12 +38391,24 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "w-25 p-1" }, [
-    _c("a", { attrs: { href: _vm.makeUrl } }, [
-      _c("img", {
-        staticClass: "w-100",
-        attrs: { src: _vm.movieImage, alt: _vm.title }
-      })
-    ]),
+    _c(
+      "a",
+      {
+        attrs: { href: _vm.makeUrl },
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            return _vm.registerSerach($event)
+          }
+        }
+      },
+      [
+        _c("img", {
+          staticClass: "w-100",
+          attrs: { src: _vm.movieImage, alt: _vm.title }
+        })
+      ]
+    ),
     _vm._v(" "),
     _c("div", { staticClass: "text-center" }, [
       _c("a", { attrs: { href: _vm.makeUrl } }, [
