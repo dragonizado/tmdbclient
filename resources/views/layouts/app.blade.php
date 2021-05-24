@@ -16,7 +16,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md  navbar-light bg-light">
             <a class="navbar-brand" href="{{ route('site.index') }}">
-                <img src="/img/perrito2.png" width="30" height="30" class="d-inline-block align-top" alt="{{env("APP_NAME")}}">
+                <img src="{{ asset('/img/perrito2.png') }}" width="30" height="30" class="d-inline-block align-top" alt="{{env("APP_NAME")}}">
                 {{config("app.name")}}
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
